@@ -8,7 +8,7 @@ public class GregorianCalendar {
     public final int DAYS_OF_CENTURY = 100;
     public final int JANUARY = 1, FEBRUARY = 2, DECEMBER = 12;
     public final int DAYS_OF_MONTH[] = {-1, 31, 28, 31, 30 ,31, 30, 31, 31, 30, 31, 30, 31}; //Empieza con -1 para calzar con los numeros de mes.
-    public final int CARROLS_MAGIC_NUMBERS_FOR_MONTHS[] = {-1, 0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5}; // Numeros del mes utilizados en el algoritmo de Lewis Carrol para calcular el dia de la semana.
+    public final int CARROLS_MAGIC_NUMBERS_FOR_MONTHS[] = {-1, 0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5}; // Numeros del mes utilizados en el algoritmo de Lewis Carrol para calcular el dia de la semana. Empieza con -1 para calzar con los numeros de mes.
   
   /**
    * Determina si un anno es bisiesto o no.
@@ -47,11 +47,11 @@ public class GregorianCalendar {
    * si el anno en cuestion es bisiesto
    * @param month: Mes para determiar la fecha del dia siguiente
    * @param day: Dia del mes utilizado para determiar la fecha del dia siguiente
-   * @return: Una hilera con la fecha del día sigueinte en formato: A, M, D. Hilera vacia en caso de fecha
+   * @return: Una hilera con la fecha del día sigueinte en formato: A, M, D; Hilera de aviso en caso de fecha
    * invalida
    */
   public String nextDay(final int year, final int month, final int day) {
-      if(!dateIsValid(year, month, day)) return "";
+      if(!dateIsValid(year, month, day)) return "Fecha invalida";
       int newYear, newMonth, newDay;
       switch (month) {
           case FEBRUARY:
@@ -114,7 +114,8 @@ public class GregorianCalendar {
    /**
    * Determina el dia de la semana, utilizando el algoritmo de Lewis Carrol. Sin embargo, como se utiliza el
    * calendario gregoriano, no se hace diferenciacion para las fechas "OldStyle" del calendario ingles,
-   * los cuales utilizan el calendario jordian
+   * los cuales utilizan el calendario jordian. Algoritmo tomado de:
+   * https://www.tandfonline.com/doi/abs/10.1080/10724117.2002.11974617
    * @param year: Anno para calular el dia de la semana. Tambien utilizado para determinar si es bisiesto
    * @param month: Mes para calcular el dia de la semana
    * @param day: Dia el cual se indica a que dia de la semana corresponde.
