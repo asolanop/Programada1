@@ -3,9 +3,7 @@ import static org.junit.Assert.*;
 
 
 public class GregorianCalendarUnitTests {
-  
-  
-  
+    
   @Test
   public void isLeapYearTest() {
     GregorianCalendar gc = new GregorianCalendar();
@@ -19,6 +17,7 @@ public class GregorianCalendarUnitTests {
   @Test
   public void dateIsValid() {
     GregorianCalendar gc = new GregorianCalendar();
+    assertEquals (gc.dateIsValid(2000,1,25), true);
     assertEquals (gc.dateIsValid(2000,1,31), true);
     assertEquals (gc.dateIsValid(2000,2,28), true);
     assertEquals (gc.dateIsValid(1700,2,28), true);
@@ -51,10 +50,10 @@ public class GregorianCalendarUnitTests {
     assertEquals (gc.dateIsValid(2068,12,32), false);
     assertEquals (gc.dateIsValid(2031,13,30), false);
     assertEquals (gc.dateIsValid(2068,0,32), false);
-    assertEquals (gc.dateIsValid(1000,11,30), false);
-    assertEquals (gc.dateIsValid(1582,11,30), true);
-    assertEquals (gc.dateIsValid(1581,11,30), false);
-    assertEquals (gc.dateIsValid(1583,11,30), true);    
+    assertEquals (gc.dateIsValid(1000,11,25), false);
+    assertEquals (gc.dateIsValid(1582,11,25), true);
+    assertEquals (gc.dateIsValid(1581,11,25), false);
+    assertEquals (gc.dateIsValid(1583,11,25), true);    
   }
   
   @Test
@@ -90,7 +89,7 @@ public class GregorianCalendarUnitTests {
   @Test
   public void dayOfWeekTest() {
     GregorianCalendar gc = new GregorianCalendar();
-    //OldDays
+    //OldStyle
     assertEquals(gc.dayOfWeek(1676,1,20), 1);
     assertEquals(gc.dayOfWeek(1593, 1, 20), 3);
     assertEquals(gc.dayOfWeek(1676,2,20), 4);
@@ -122,7 +121,7 @@ public class GregorianCalendarUnitTests {
     assertEquals(gc.dayOfWeek(1676,3,1), 0);
     assertEquals(gc.dayOfWeek(1593, 2, 28), 0);
     assertEquals(gc.dayOfWeek(1593, 3, 1), 1);
-    //NewDays
+    //NewStyle
     assertEquals(gc.dayOfWeek(2016,1,20), 3);
     assertEquals(gc.dayOfWeek(1783,1,20), 1);
     assertEquals(gc.dayOfWeek(2016,2,20), 6);

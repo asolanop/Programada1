@@ -10,9 +10,10 @@ public class GregorianCalendar {
   public final int JANUARY = 1, FEBRUARY = 2, DECEMBER = 12;
   public final int DAYS_OF_MONTH[] = {-1, 31, 28, 31, 30 ,31, 30, 31, 31, 30, 31, 30, 31}; //Empieza con -1 para calzar con los numeros de mes.
   public final int CARROLS_MAGIC_NUMBERS_FOR_MONTHS[] = {-1, 0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5}; // Numeros del mes utilizados en el algoritmo de Lewis Carrol para calcular el dia de la semana. Empieza con -1 para calzar con los numeros de mes.
+  public final int ACTION_ADD_DAY = 1, ACTION_ADD_MONTH = 2, ACTION_ADD_YEAR = 3; // Constantes represenan las acciones a tomar al definir le nueva fecha del dia siguiente, para el metodo nextDay
   
   /**
-   * Determina si un anno es bisiesto o no.
+   * Determina si un anno es bisiesto o no: Es bisiesto al ser divisible por 400 O por 4 pero no por 100
    * @param year: Anno en cuestion para determinar si es bisiesto o no.
    * @return: True si el anno es bisiesto. False si no lo es.
    */
@@ -53,60 +54,82 @@ public class GregorianCalendar {
    */
   public String nextDay(final int year, final int month, final int day) {
     if(!dateIsValid(year, month, day)) return "Fecha invalida";
-    int newYear, newMonth, newDay;
+    String nextDay = "";
     switch (month) {
       case FEBRUARY:
         if(!isLeapYear(year)) {
         if(day < DAYS_OF_MONTH[FEBRUARY]) {
           // Agrega un dia a los dias del mes.
-          newDay = day+1;
-          newMonth = month;
-          newYear = year;
+          nextDay = getNewDate(year, month, day, ACTION_ADD_DAY);
         } else {
           // Agrega un mes y reinicia el dia del mes en 1.
-          newDay = 1;
-          newMonth = month+1;
-          newYear = year;
+          nextDay = getNewDate(year, month, day, ACTION_ADD_MONTH);
         }
       } else { //Anno bisiesto
         if(day < DAYS_OF_MONTH[FEBRUARY] + 1) {
           // Agrega un dia a los dias de febrero.
-          newDay = day+1;
-          newMonth = month;
-          newYear = year;
+          nextDay = getNewDate(year, month, day, ACTION_ADD_DAY);
         } else {
           // Agrega un mes y reinicia el dia del mes en 1.
-          newDay = 1;
-          newMonth = month+1;
-          newYear = year;
+          nextDay = getNewDate(year, month, day, ACTION_ADD_MONTH);
         }
       }
       break;
       case DECEMBER:
         if(day < DAYS_OF_MONTH[DECEMBER]) {
         // Agrega un dia a los dias del mes.
-        newDay = day+1;
-        newMonth = month;
-        newYear = year;
+        nextDay = getNewDate(year, month, day, ACTION_ADD_DAY);
       } else {
         // Agrega un anno y reinicia el dia del mes en 1 y el mes en enero.
-        newDay = 1;
-        newMonth = JANUARY;
-        newYear = year+1;
+        nextDay = getNewDate(year, month, day, ACTION_ADD_YEAR);
       }
       break;
       default:
         if(day < DAYS_OF_MONTH[month]) {
         // Agrega un dia a los dias del mes.
-        newDay = day+1;
-        newMonth = month;
-        newYear = year;
+        nextDay = getNewDate(year, month, day, ACTION_ADD_DAY);
       } else {
+        // Agrega un mes y reinicia el dia del mes en 1.
+        nextDay = getNewDate(year, month, day, ACTION_ADD_MONTH);
+      }
+      break;
+    }
+    return nextDay;
+  }
+  
+  
+  /**
+   * Retorna la nueva fecha para el dia siguiente, de acuerdo a la tupla ingresada y la accion requerida
+   * @param year: Anno inicial para determinar la fecha del dia siguiente
+   * @param month: Mes inicial para determiar la fecha del dia siguiente
+   * @param day: Dia del mes inicial para determiar la fecha del dia siguiente
+   * @param action: Accion a tomar con los dias ingresados para poder dar la nueva fecha. Tres posibles valores son:
+   *                ACTION_ADD_YEAR = añadir uno al año, resetear el dia en uno y el mes en enero
+   *                ACTION_ADD_MONTH = añadir uno al mes, resetear el dia en 1
+   *                ACTION_ADD_DAY = añadir uno al dia, mantener los demas valores
+   * @return: Retorna la nueva tupla con la fecha del dia siguiente.
+   */ 
+  public String getNewDate(final int year, final int month, final int day, final int action) {
+    int newYear, newMonth, newDay;
+    switch(action) {
+      case ACTION_ADD_YEAR:
+        // Agrega un anno y reinicia el dia del mes en 1 y el mes en enero.
+        newDay = 1;
+        newMonth = JANUARY;
+        newYear = year+1;
+        break;
+      case ACTION_ADD_MONTH:
         // Agrega un mes y reinicia el dia del mes en 1.
         newDay = 1;
         newMonth = month+1;
         newYear = year;
-      }
+        break;
+      default:
+        // Agrega un dia a los dias del mes.
+        newDay = day+1;
+        newMonth = month;
+        newYear = year;
+        break;
     }
     return newYear + ", " + newMonth + ", " + newDay;
   }
@@ -157,9 +180,9 @@ public class GregorianCalendar {
     String [] dayOfWeek = {"Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"};
     GregorianCalendar gc = new GregorianCalendar();
     int year = 1982, month = 9, day = 14;
-    System.out.println("La fecha: " + year + ", " + month + ", " + day + " es vÃ¡lida? " + gc.dateIsValid(year, month, day));
-    System.out.println("AÃ±o es bisiesto?: " + gc.isLeapYear(year) );
-    System.out.println("DÃ­a de la semana es: " + dayOfWeek[gc.dayOfWeek(year,month, day)]);
-    System.out.println("La fecha del dÃ­a siguiente es: " + gc.nextDay(year,month, day));
+    System.out.println("La fecha: " + year + ", " + month + ", " + day + " es válida? " + gc.dateIsValid(year, month, day));
+    System.out.println("Año es bisiesto?: " + gc.isLeapYear(year) );
+    System.out.println("Día de la semana es: " + dayOfWeek[gc.dayOfWeek(year,month, day)]);
+    System.out.println("La fecha del día siguiente es: " + gc.nextDay(year,month, day));
   }
 }
