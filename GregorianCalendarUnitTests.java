@@ -17,6 +17,77 @@ public class GregorianCalendarUnitTests {
   }
   
   @Test
+  public void dateIsValid() {
+    GregorianCalendar gc = new GregorianCalendar();
+    assertEquals (gc.dateIsValid(2000,1,31), true);
+    assertEquals (gc.dateIsValid(2000,2,28), true);
+    assertEquals (gc.dateIsValid(1700,2,28), true);
+    assertEquals (gc.dateIsValid(2000,2,29), true);
+    assertEquals (gc.dateIsValid(2000,2,30), false);
+    assertEquals (gc.dateIsValid(2000,2,31), false);
+    assertEquals (gc.dateIsValid(2000,3,31), true);
+    assertEquals (gc.dateIsValid(2040,4,30), true);
+    assertEquals (gc.dateIsValid(2040,5,31), true);
+    assertEquals (gc.dateIsValid(2031,6,30), true);
+    assertEquals (gc.dateIsValid(2051,7,31), true);
+    assertEquals (gc.dateIsValid(2040,8,31), true);
+    assertEquals (gc.dateIsValid(2040,9,30), true);
+    assertEquals (gc.dateIsValid(2000,10,31), true);
+    assertEquals (gc.dateIsValid(2031,11,30), true);
+    assertEquals (gc.dateIsValid(2068,12,31), true);
+    assertEquals (gc.dateIsValid(2051,7,0), false);
+    assertEquals (gc.dateIsValid(2000,1,32), false);
+    assertEquals (gc.dateIsValid(2000,2,30), false);
+    assertEquals (gc.dateIsValid(1700,2,29), false);
+    assertEquals (gc.dateIsValid(2000,3,32), false);
+    assertEquals (gc.dateIsValid(2040,4,31), false);
+    assertEquals (gc.dateIsValid(2040,5,32), false);
+    assertEquals (gc.dateIsValid(2031,6,31), false);
+    assertEquals (gc.dateIsValid(2051,7,32), false);
+    assertEquals (gc.dateIsValid(2040,8,32), false);
+    assertEquals (gc.dateIsValid(2040,9,31), false);
+    assertEquals (gc.dateIsValid(2010,10,32), false);
+    assertEquals (gc.dateIsValid(2031,11,31), false);
+    assertEquals (gc.dateIsValid(2068,12,32), false);
+    assertEquals (gc.dateIsValid(2031,13,30), false);
+    assertEquals (gc.dateIsValid(2068,0,32), false);
+    assertEquals (gc.dateIsValid(1000,11,30), false);
+    assertEquals (gc.dateIsValid(1582,11,30), true);
+    assertEquals (gc.dateIsValid(1581,11,30), false);
+    assertEquals (gc.dateIsValid(1583,11,30), true);    
+  }
+  
+  @Test
+  public void nextDay() {
+    GregorianCalendar gc = new GregorianCalendar();
+    assertEquals(gc.nextDay(2000,1,31), "2000, 2, 1");  
+    assertEquals(gc.nextDay(2000,1,20), "2000, 1, 21");
+    assertEquals(gc.nextDay(2000,2,28), "2000, 2, 29");
+    assertEquals(gc.nextDay(1700,2,28), "1700, 3, 1");
+    assertEquals(gc.nextDay(2000,2,29), "2000, 3, 1");
+    assertEquals(gc.nextDay(2000,3,31), "2000, 4, 1");
+    assertEquals(gc.nextDay(2000,3,20), "2000, 3, 21");
+    assertEquals(gc.nextDay(2040,4,30), "2040, 5, 1");
+    assertEquals(gc.nextDay(2040,4,20), "2040, 4, 21");
+    assertEquals(gc.nextDay(2040,5,31), "2040, 6, 1");
+    assertEquals(gc.nextDay(2040,5,20), "2040, 5, 21");
+    assertEquals(gc.nextDay(2031,6,30), "2031, 7, 1");
+    assertEquals(gc.nextDay(2031,6,20), "2031, 6, 21");
+    assertEquals(gc.nextDay(2051,7,31), "2051, 8, 1");
+    assertEquals(gc.nextDay(2051,7,20), "2051, 7, 21");
+    assertEquals(gc.nextDay(2040,8,31), "2040, 9, 1");
+    assertEquals(gc.nextDay(2040,8,20), "2040, 8, 21");
+    assertEquals(gc.nextDay(2040,9,30), "2040, 10, 1");
+    assertEquals(gc.nextDay(2040,9,20), "2040, 9, 21");
+    assertEquals(gc.nextDay(2000,10,31), "2000, 11, 1");
+    assertEquals(gc.nextDay(2000,10,20), "2000, 10, 21");
+    assertEquals(gc.nextDay(2031,11,30), "2031, 12, 1");
+    assertEquals(gc.nextDay(2031,11,20), "2031, 11, 21");
+    assertEquals(gc.nextDay(2068,12,31), "2069, 1, 1");
+    assertEquals(gc.nextDay(2068,12,20), "2068, 12, 21");
+  }
+  
+  @Test
   public void dayOfWeekTest() {
     GregorianCalendar gc = new GregorianCalendar();
     //OldDays
@@ -84,5 +155,6 @@ public class GregorianCalendarUnitTests {
     assertEquals(gc.dayOfWeek(1783,2,28), 5);
     assertEquals(gc.dayOfWeek(1783,3,1), 6);
   }
+ 
   
 }
