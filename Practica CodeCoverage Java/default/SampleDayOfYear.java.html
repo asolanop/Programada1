@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SampleDayOfYear.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Coverage Summary</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">SampleDayOfYear.java</span></div><h1>SampleDayOfYear.java</h1><pre class="source lang-java linenums">import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+
+/**
+ *
+ * @author CodeCoverage Developer
+ */
+<span class="nc" id="L10">public class SampleDayOfYear {</span>
+
+<span class="fc" id="L12">    static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));</span>
+<span class="fc" id="L13">    static PrintStream out = System.out; </span>
+
+    /**
+     * @param args the command line arguments
+     * @throws java.io.IOException
+     */
+    public static void main(String[] args) throws IOException {
+        // TODO code application logic here}
+        int year, day, month;
+<span class="nc" id="L22">        System.out.print(&quot;Digite el valor del dia: &quot;);</span>
+<span class="nc" id="L23">        day = Integer.parseInt(in.readLine());</span>
+<span class="nc" id="L24">        System.out.print(&quot;Digite el valor del mes: &quot;);</span>
+<span class="nc" id="L25">        month = Integer.parseInt(in.readLine());</span>
+<span class="nc" id="L26">        System.out.print(&quot;Digite el valor del a�o: &quot;);</span>
+<span class="nc" id="L27">        year = Integer.parseInt(in.readLine());</span>
+<span class="nc" id="L28">        int numDay = dayOfYear(month, day, year);</span>
+<span class="nc bnc" id="L29" title="All 4 branches missed.">        switch (numDay) {</span>
+            case -1:
+<span class="nc" id="L31">                System.out.println(&quot;Mes incorrecto&quot;);</span>
+<span class="nc" id="L32">                break;</span>
+            case -2:
+<span class="nc" id="L34">                System.out.println(&quot;Dia incorrecto&quot;);</span>
+<span class="nc" id="L35">                break;</span>
+            case -3:
+<span class="nc" id="L37">                System.out.println(&quot;A�o incorrecto&quot;);</span>
+<span class="nc" id="L38">                break;</span>
+            default:
+<span class="nc" id="L40">                System.out.println(&quot;El numero de dia es: &quot; + numDay);</span>
+<span class="nc" id="L41">                System.out.println(&quot;El a�o es bisiesto? &quot; + leapYear(year));</span>
+                break;
+        }
+<span class="nc" id="L44">    }</span>
+ 
+    public static boolean isValidDate(final int year, final int month, final int dayOfMonth){
+      
+<span class="fc" id="L48">    int[] DAYS_IN_MONTH = {0,31,28,31,30,31,30,31,31,30,31,30,31};</span>
+<span class="fc" id="L49">    int FEBRUARY = 2;</span>
+      
+<span class="fc bfc" id="L51" title="All 10 branches covered.">    if((dayOfMonth &gt;= 1 &amp;&amp; dayOfMonth &lt;= 31) &amp;&amp; (month &gt;= 1 &amp;&amp; month &lt;= 12) &amp;&amp; (year &gt;= 1582)){</span>
+      
+<span class="fc bfc" id="L53" title="All 8 branches covered.">      if((leapYear(year) &amp;&amp; (month == FEBRUARY) &amp;&amp; (dayOfMonth == 29))  </span>
+        || (dayOfMonth &lt;= DAYS_IN_MONTH[month])){
+        
+<span class="fc" id="L56">        return true;</span>
+      
+      }else{
+<span class="fc" id="L59">        return false;</span>
+      }
+      
+    }else{
+<span class="fc" id="L63">      return false;</span>
+    }
+    }
+    
+    public static int dayOfYear(int month, int dayOfMonth, int year) {
+<span class="fc" id="L68">        int totalDays = validateDaysOfMonth(month, dayOfMonth,year);</span>
+<span class="fc bfc" id="L69" title="All 4 branches covered.">        if (totalDays != -1 &amp;&amp; totalDays != -2) {</span>
+<span class="fc" id="L70">            totalDays = validateYear(year);</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">            if (totalDays != -3) {                </span>
+<span class="fc" id="L72">                int daysPerMonthArray[]</span>
+                        = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; 
+<span class="fc" id="L74">                totalDays = dayOfMonth;</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">                for (int i = 1; i &lt; month; i++) {</span>
+<span class="fc" id="L76">                    totalDays += daysPerMonthArray[i-1];</span>
+                }
+                
+<span class="fc bfc" id="L79" title="All 4 branches covered.">                if(leapYear(year) &amp;&amp; month &gt; 2) {</span>
+<span class="fc" id="L80">                  totalDays++;</span>
+                }
+            }
+        }
+<span class="fc" id="L84">        return totalDays;</span>
+    }
+        public static int validateDaysOfMonth(int month, int dayOfMonth, int year) {
+<span class="fc" id="L87">        int isNotCorrect = validateMonth(month);</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (isNotCorrect &gt; -1) {</span>
+<span class="fc bfc" id="L89" title="All 3 branches covered.">            switch (month) {</span>
+                case 2://febraury days in month: 28
+<span class="fc bfc" id="L91" title="All 4 branches covered.">                    if (dayOfMonth &lt; 1 || dayOfMonth &gt; 28) {</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">                        if(!leapYear(year)){</span>
+<span class="fc" id="L93">                          isNotCorrect = -2;</span>
+                        }
+                    }
+                    break;
+              case 1:   //IDO
+                case 3:
+                case 5:
+                case 7:
+                case 8:
+                case 10:
+                case 11:
+                case 12://months with 31 days
+<span class="fc bfc" id="L105" title="All 4 branches covered.">                    if (dayOfMonth &lt; 1 || dayOfMonth &gt; 31) {</span>
+<span class="fc" id="L106">                        isNotCorrect = -2;</span>
+                    }
+                    break;
+                default://month with 30 days
+<span class="fc bfc" id="L110" title="All 4 branches covered.">                    if (dayOfMonth &lt; 1 || dayOfMonth &gt; 30) {</span>
+<span class="fc" id="L111">                          isNotCorrect = -2;</span>
+                    }
+                    break;
+            }
+        }
+<span class="fc" id="L116">        return isNotCorrect;</span>
+    }
+
+        
+    public static int[] devuelveArray (int d, int m, int a) {
+          
+    int[] arregloParaDevolver ; //= {0,0,0};
+<span class="nc" id="L123">    arregloParaDevolver = new int[3];</span>
+          
+<span class="nc" id="L125">    arregloParaDevolver[0] = d+1;</span>
+<span class="nc" id="L126">    arregloParaDevolver[1] = m+1;</span>
+<span class="nc" id="L127">    arregloParaDevolver[2] = a+1;</span>
+<span class="nc" id="L128">    return arregloParaDevolver;</span>
+    }
+        
+    public static int validateMonth(int pmonth) {
+<span class="fc" id="L132">        int month = pmonth;</span>
+<span class="fc bfc" id="L133" title="All 4 branches covered.">        if (month &gt; 12 || month &lt; 1) {   </span>
+<span class="fc" id="L134">            month = -1;//month not correct</span>
+        }
+<span class="fc" id="L136">        return month;</span>
+    }
+        public static int validateYear(int pyear) {
+<span class="fc" id="L139">        int yeay = pyear;</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        if (yeay &lt; 1582) {</span>
+<span class="fc" id="L141">            yeay = -3;//year not correct</span>
+        }
+<span class="fc" id="L143">        return yeay;</span>
+    }
+    public static boolean leapYear(int pyear){
+<span class="fc" id="L146">        boolean isLeap = false;</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        if (validateYear(pyear) &gt; -3) {        </span>
+<span class="fc bfc" id="L148" title="All 8 branches covered.">              if ((pyear % 400 == 0) | (pyear % 4 == 0 &amp; pyear % 100 != 0)) {</span>
+<span class="fc" id="L149">                  isLeap = true;</span>
+              } 
+             } 
+<span class="fc" id="L152">        return isLeap;</span>
+    }
+    
+    public static String nextDate(final int year, final int month, final int dayOfMonth){
+    
+<span class="fc" id="L157">    int nextDay = dayOfMonth;</span>
+<span class="fc" id="L158">    int nextMonth = month;</span>
+<span class="fc" id="L159">    int nextYear = year;</span>
+    
+<span class="fc" id="L161">    int FIRST_DAY = 1;</span>
+<span class="fc" id="L162">    int JANUARY = 1;</span>
+<span class="fc" id="L163">    int FEBRUARY = 2;</span>
+<span class="fc" id="L164">    int APRIL = 4;</span>
+<span class="fc" id="L165">    int JUNE = 6;</span>
+<span class="fc" id="L166">    int SEPTEMBER = 9;</span>
+<span class="fc" id="L167">    int NOVEMBER = 11;</span>
+<span class="fc" id="L168">    int DECEMBER = 12;</span>
+ 
+<span class="fc bfc" id="L170" title="All 2 branches covered.">    if(isValidDate(year, month, dayOfMonth)){</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">      if(dayOfMonth &lt;= 27){</span>
+<span class="fc" id="L172">        nextDay++;</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">      }else if(dayOfMonth == 28){</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">        if(month != FEBRUARY){</span>
+<span class="fc" id="L175">          nextDay++;</span>
+        }else{
+<span class="fc bfc" id="L177" title="All 2 branches covered.">          if(leapYear(year)){    </span>
+<span class="fc" id="L178">            nextDay++;</span>
+          }else{
+<span class="fc" id="L180">            nextDay = FIRST_DAY;</span>
+<span class="fc" id="L181">            nextMonth++;</span>
+          }
+        }
+<span class="fc bfc" id="L184" title="All 2 branches covered.">      }else if(dayOfMonth == 29){</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if(month != FEBRUARY){</span>
+<span class="fc" id="L186">          nextDay++;</span>
+        }else{
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">          if(leapYear(year)){   //isLeapYear</span>
+<span class="fc" id="L189">            nextDay = FIRST_DAY;</span>
+<span class="fc" id="L190">            nextMonth++;</span>
+          }
+        }
+<span class="fc bfc" id="L193" title="All 2 branches covered.">      }else if(dayOfMonth == 30){</span>
+<span class="fc bfc" id="L194" title="All 8 branches covered.">        if(month == APRIL || month == JUNE || month == SEPTEMBER || month == NOVEMBER){</span>
+<span class="fc" id="L195">          nextDay = FIRST_DAY;</span>
+<span class="fc" id="L196">          nextMonth++;</span>
+        }else{
+<span class="fc" id="L198">          nextDay++;</span>
+        }
+<span class="fc bfc" id="L200" title="All 2 branches covered.">      }else if(month == DECEMBER){</span>
+<span class="fc" id="L201">        nextDay = FIRST_DAY;</span>
+<span class="fc" id="L202">        nextMonth = JANUARY;</span>
+<span class="fc" id="L203">        nextYear++;</span>
+      }else{
+<span class="fc" id="L205">        nextDay = FIRST_DAY;</span>
+<span class="fc" id="L206">        nextMonth++;</span>
+      }
+      
+<span class="fc" id="L209">      return &quot;&quot; + nextYear + &quot;/&quot; + nextMonth + &quot;/&quot; + nextDay;</span>
+    }else{
+<span class="fc" id="L211">      return &quot;ERROR&quot;;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

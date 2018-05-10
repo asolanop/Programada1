@@ -1,0 +1,19 @@
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+
+public class SampleUnitTests {
+ 
+    @Test
+    public void pruebaDayOfYear() {    
+      assertEquals (SampleDayOfYear.dayOfYear(12,31,2017),365);  
+      assertEquals (SampleDayOfYear.dayOfYear(1,2,2017),2);  
+    }
+    
+    @Test
+    public void pruebaDiaSiguiente() {
+      assertEquals(SampleDayOfYear.nextDate(2017,7,30),"2017/7/31");
+      assertEquals(SampleDayOfYear.nextDate(2003,2,28),"2003/3/1");
+    }
+    
+}
