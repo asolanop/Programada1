@@ -176,6 +176,42 @@ public class GregorianCalendar {
     return dayOfWeek;
   }
   
+  int countLeapYears(Date d)
+  {
+    int years = d.getYear();
+    int daysOfLeapYears = 0;
+    for (int i= GREGORIAN_STARTING_YEAR; i < years; i++){
+      if(isLeapYear(i)){
+        daysOfLeapYears = daysOfLeapYears + 1;
+      } 
+    }
+    if (d.getMonth() > FEBRUARY)
+        if(isLeapYear(years)){
+        daysOfLeapYears += 1;
+      } 
+
+    return daysOfLeapYears;
+  }
+  
+  public int betweenDates(Date date1, Date date2) {
+   
+    int totalDays = (date1.getYear() - 1)  * 365 + date1.getDay();
+ 
+    for (int i=1; i< date1.getMonth(); i++)
+        totalDays += DAYS_OF_MONTH[i];
+ 
+    totalDays += countLeapYears(date1);
+ 
+    int totalDaysDate2 = (date2.getYear()-1) * 365 + date2.getDay();
+    for (int i=1; i<date2.getMonth(); i++)
+        totalDaysDate2 += DAYS_OF_MONTH[i];
+    totalDaysDate2 += countLeapYears(date2);
+    
+    int daysBetweenTwoDates = totalDays - totalDaysDate2;
+ 
+    return (daysBetweenTwoDates < 0 ? -daysBetweenTwoDates : daysBetweenTwoDates);
+  }
+  
   public static void main(String [] args) {
     String [] dayOfWeek = {"Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"};
     GregorianCalendar gc = new GregorianCalendar();
@@ -184,5 +220,11 @@ public class GregorianCalendar {
     System.out.println("Año es bisiesto?: " + gc.isLeapYear(year) );
     System.out.println("Día de la semana es: " + dayOfWeek[gc.dayOfWeek(year,month, day)]);
     System.out.println("La fecha del día siguiente es: " + gc.nextDay(year,month, day));
+    
+    Date date1 = new Date(2000, 2, 1);
+    Date date2 = new Date(2004, 2, 1);
+    
+     System.out.println(gc.betweenDates(date1, date2));
+   
   }
 }
