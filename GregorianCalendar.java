@@ -97,6 +97,33 @@ public class GregorianCalendar {
     return nextDay;
   }
   
+  public int[] futureDays(Date date, int daysFuture) {
+    int[] fecha = new int[3];
+    int amountDaysFuture = daysFuture;
+    int year = date.getYear();
+    int month = date.getMonth();
+    int day = date.getDay();
+    String futureDate = "";
+    
+    Date dateAfterDays = new Date(year, month, day);
+    fecha[0] = dateAfterDays.getYear();
+    fecha[1] = dateAfterDays.getMonth();
+    fecha[2] = dateAfterDays.getDay();
+    
+    if(daysFuture <= 0){
+      return fecha;
+    }else{
+      futureDate = nextDay(year, month, day);
+      amountDaysFuture -= 1;
+      String[] parts = futureDate.split(", ");
+      year = Integer.parseInt(parts[0]);
+      month = Integer.parseInt(parts[1]);
+      day = Integer.parseInt(parts[2]);
+        
+      Date dateTemp = new Date(year, month, day);
+      return futureDays(dateTemp, amountDaysFuture); 
+    } 
+  }
   
   /**
    * Retorna la nueva fecha para el dia siguiente, de acuerdo a la tupla ingresada y la accion requerida
@@ -250,9 +277,11 @@ public class GregorianCalendar {
     System.out.println("La fecha del día siguiente es: " + gc.nextDay(year,month, day));
     
     Date date1 = new Date(2000, 2, 1);
-    Date date2 = new Date(2004, 2, 1);
+    Date date2 = new Date(2004, 2, 25);
     
     System.out.println(gc.daysBetweenDates(date1, date2));
-   
+    int b[] = new int [3];
+    b  = gc.futureDays(date2, 7);
+    System.out.println(b[0] + ", " + b[1] + ", " + b[2]);
   }
 }
