@@ -176,16 +176,26 @@ public class GregorianCalendar {
     return dayOfWeek;
   }
   
-  int countLeapYears(Date d)
+  
+   /**
+   * Determina la cantidad de días entre dos fechas dadas
+   * @param date1: Fecha número 1 a ser evaluada con la fecha 2
+   * @param date2: Fecha número 2 a ser evaluada con la fecha 1
+   * @return: Entero que representa los días que hay entre dos fechas dadas
+   */
+  int countLeapYears(Date date)
   {
-    int years = d.getYear();
+    int years = date.getYear();
     int daysOfLeapYears = 0;
+   
+    //Se evalua cada año antes del dado para ver si es bisiesto, si lo es, se debe sumar un día a los días extra por bisiestos
     for (int i= GREGORIAN_STARTING_YEAR; i < years; i++){
       if(isLeapYear(i)){
-        daysOfLeapYears = daysOfLeapYears + 1;
+        daysOfLeapYears += 1;
       } 
     }
-    if (d.getMonth() > FEBRUARY)
+    //Si la fecha incluía un mes mayor a febrero hay que tomar en cuenta el año en cuestión a la hora de sumar los días extra por bisiestos
+    if (date.getMonth() > FEBRUARY)
         if(isLeapYear(years)){
         daysOfLeapYears += 1;
       } 
@@ -193,22 +203,40 @@ public class GregorianCalendar {
     return daysOfLeapYears;
   }
   
-  public int betweenDates(Date date1, Date date2) {
+   /**
+   * Determina la cantidad de días entre dos fechas dadas
+   * @param date1: Fecha número 1 a ser evaluada con la fecha 2
+   * @param date2: Fecha número 2 a ser evaluada con la fecha 1
+   * @return: Entero que representa los días que hay entre dos fechas dadas
+   */
+  public int daysBetweenDates(Date date1, Date date2) {
    
-    int totalDays = (date1.getYear() - 1)  * 365 + date1.getDay();
- 
+    //cantidad de días en total antes del año evaluado (sin contar días extra por años bisiestos) según año de la fecha
+    int totalDaysDate1 = (date1.getYear() - 1)  * 365;
+    
+    //cantidad de días en total antes de la fecha evaluada para el año de la fecha, según mes de la fecha
     for (int i=1; i< date1.getMonth(); i++)
-        totalDays += DAYS_OF_MONTH[i];
+        totalDaysDate1 += DAYS_OF_MONTH[i];
  
-    totalDays += countLeapYears(date1);
+    //cantidad de días del mes de la fecha evaluada
+    totalDaysDate1 += date1.getDay();
+    
+    //Por último, se suma los días extra de los años bisiestos tomando en cuenta el año presente, si es bisiesto
+    //y si es una fecha que incluye febrero (mes > febrero)
+    totalDaysDate1 += countLeapYears(date1);
  
-    int totalDaysDate2 = (date2.getYear()-1) * 365 + date2.getDay();
+    //Se hace lo mismo para la otra fecha involucrada
+    int totalDaysDate2 = (date2.getYear()-1) * 365;
     for (int i=1; i<date2.getMonth(); i++)
         totalDaysDate2 += DAYS_OF_MONTH[i];
+    
+    totalDaysDate2 += date2.getDay();
     totalDaysDate2 += countLeapYears(date2);
     
-    int daysBetweenTwoDates = totalDays - totalDaysDate2;
- 
+    //Se saca la diferencia de días para determinar cuántos días hay entre las fechas dadas
+    int daysBetweenTwoDates = totalDaysDate1 - totalDaysDate2;
+    
+    //Devuelve el número positivo del cálculo
     return (daysBetweenTwoDates < 0 ? -daysBetweenTwoDates : daysBetweenTwoDates);
   }
   
@@ -224,7 +252,7 @@ public class GregorianCalendar {
     Date date1 = new Date(2000, 2, 1);
     Date date2 = new Date(2004, 2, 1);
     
-     System.out.println(gc.betweenDates(date1, date2));
+    System.out.println(gc.daysBetweenDates(date1, date2));
    
   }
 }
