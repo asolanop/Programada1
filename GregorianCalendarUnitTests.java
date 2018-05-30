@@ -5,6 +5,33 @@ import static org.junit.Assert.*;
 public class GregorianCalendarUnitTests {
   
   @Test
+  public void futureDaysTest() {
+    GregorianCalendar gc = new GregorianCalendar();
+    assertArrayEquals (gc.futureDays(new Date(2018, 12, 31), 0), new int[] {2018, 12, 31}); 
+    assertArrayEquals (gc.futureDays(new Date(2018, 12, 31), 1), new int[] {2019, 1, 1});   
+    assertArrayEquals (gc.futureDays(new Date(2018, 12, 31), 365), new int[] {2019, 12, 31});   
+    assertArrayEquals (gc.futureDays(new Date(2018, 12, 31), 366), new int[] {2020, 1, 1});   
+    assertArrayEquals (gc.futureDays(new Date(2016, 12, 31), 367), new int[] {2018, 1, 2});   
+    assertArrayEquals (gc.futureDays(new Date(2016, 1, 20), 7), new int[] {2016, 1, 27});   
+    assertArrayEquals (gc.futureDays(new Date(2016, 12, 1), 32), new int[] {2017,1,2});   
+    assertArrayEquals (gc.futureDays(new Date(2018, 1, 31), 1), new int[] {2018,2,1});   
+    assertArrayEquals (gc.futureDays(new Date(2018, 2, 20), 7), new int[] {2018,2,27});   
+    assertArrayEquals (gc.futureDays(new Date(2018, 2, 28), 32), new int[] {2018,4,1});   
+    assertArrayEquals (gc.futureDays(new Date(2016, 2, 29), 366), new int[] {2017,3,1});   
+    assertArrayEquals (gc.futureDays(new Date(2016, 2, 29), 0), new int[] {2016,2,29});   
+    assertArrayEquals (gc.futureDays(new Date(2018, 2, 28), 1), new int[] {2018,3,1});                  
+    assertArrayEquals (gc.futureDays(new Date(2016, 2, 28), 1), new int[] {2016,2,29}); 
+    assertArrayEquals (gc.futureDays(new Date(2016, 3, 20), 7), new int[] {2016,3,27});   
+    assertArrayEquals (gc.futureDays(new Date(2015, 3, 31), 367), new int[] {2016,4,1});   
+    assertArrayEquals (gc.futureDays(new Date(2018, 6, 25), 7), new int[] {2018,7,2});        
+    assertArrayEquals (gc.futureDays(new Date(2018, 6, 20), 32), new int[] {2018,7,22}); 
+    assertArrayEquals (gc.futureDays(new Date(2016, 6, 30), 366), new int[] {2017,7,1});   
+    assertArrayEquals (gc.futureDays(new Date(2018, 7, 1), 7), new int[] {2018,7,8});   
+    assertArrayEquals (gc.futureDays(new Date(2018, 7, 20), 0), new int[] {2018,7,20});        
+    assertArrayEquals (gc.futureDays(new Date(2018, 7, 31), 365), new int[] {2019,7,31}); 
+  }
+  
+  @Test
   public void previousDayTest() {
     GregorianCalendar gc = new GregorianCalendar();
     assertArrayEquals(gc.previousDay(2018,1,1), new int[] {2017,12,31}); 

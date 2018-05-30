@@ -71,9 +71,9 @@
 <span class="fc bfc" id="L71" title="All 3 branches covered.">    switch (month) {</span>
       case FEBRUARY:
 <span class="fc bfc" id="L73" title="All 2 branches covered.">        if(!isLeapYear(year)) {</span>
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if(day &lt; DAYS_OF_MONTH[FEBRUARY]) {</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if(day &lt; DAYS_OF_MONTH[FEBRUARY]) {</span>
           // Agrega un dia a los dias del mes.
-<span class="nc" id="L76">          nextDay = getNewDate(year, month, day, ACTION_ADD_DAY);</span>
+<span class="fc" id="L76">          nextDay = getNewDate(year, month, day, ACTION_ADD_DAY);</span>
         } else {
           // Agrega un mes y reinicia el dia del mes en 1.
 <span class="fc" id="L79">          nextDay = getNewDate(year, month, day, ACTION_ADD_MONTH);</span>
@@ -153,17 +153,17 @@
    * 
    */ 
   public int[] futureDays(Date date, int daysFuture) {
-<span class="nc" id="L156">    int[] resultDate = date.toArray();</span>
+<span class="fc" id="L156">    int[] resultDate = date.toArray();</span>
     
-<span class="nc bnc" id="L158" title="All 2 branches missed.">    if(daysFuture &lt;= 0){</span>
-<span class="nc" id="L159">      return resultDate;</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">    if(daysFuture &lt;= 0){</span>
+<span class="fc" id="L159">      return resultDate;</span>
     }else{
-<span class="nc" id="L161">      String futureDate = nextDay(date.getYear(), date.getMonth(), date.getDay());</span>
-<span class="nc" id="L162">      String[] parts = futureDate.split(&quot;, &quot;);</span>
-<span class="nc" id="L163">      int year = Integer.parseInt(parts[0]);</span>
-<span class="nc" id="L164">      int month = Integer.parseInt(parts[1]);</span>
-<span class="nc" id="L165">      int day = Integer.parseInt(parts[2]);</span>
-<span class="nc" id="L166">      return futureDays(new Date(year, month, day), daysFuture - 1); </span>
+<span class="fc" id="L161">      String futureDate = nextDay(date.getYear(), date.getMonth(), date.getDay());</span>
+<span class="fc" id="L162">      String[] parts = futureDate.split(&quot;, &quot;);</span>
+<span class="fc" id="L163">      int year = Integer.parseInt(parts[0]);</span>
+<span class="fc" id="L164">      int month = Integer.parseInt(parts[1]);</span>
+<span class="fc" id="L165">      int day = Integer.parseInt(parts[2]);</span>
+<span class="fc" id="L166">      return futureDays(new Date(year, month, day), daysFuture - 1); </span>
     } 
   }
   
@@ -325,9 +325,9 @@
   
   
   /**
-   * Determina la cantidad de d�as transcurridos para una fecha a partir del a�o 0.
+   * Determina la cantidad de d�as transcurridos para una fecha a partir del a�o 1582 (inicio del calendario Gregoriano).
    * @param date: Fecha a calcularle la cantidad de dias totales
-   * @return entero que representa los d�as transcurridos desde el a�o 0 hasta la fecha dada.
+   * @return entero que representa los d�as transcurridos desde el a�o 1582 hasta la fecha dada.
    */
   public int countDaysOfDate(Date date) {
     //cantidad de d�as en total antes del a�o evaluado (sin contar d�as extra por a�os bisiestos) seg�n a�o de la fecha
