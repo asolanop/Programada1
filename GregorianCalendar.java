@@ -147,16 +147,20 @@ public class GregorianCalendar {
     return newYear + ", " + newMonth + ", " + newDay;
   }
   
-  
   /**
-   * 
-   * 
+   * Determina la fecha futura dada una fecha base y un número de días que se cuentan posterior a esta para obtener esa fecha futura
+   * @param date: Fecha inicial a partir de la cual se busca la fecha futura según una cantidad de días a contar posterior a esa fecha.
+   * @param daysFuture: Cantidad de días que se cuentan, siguientes a la fecha base dada.
+   * @return: Retorna un arreglo con la fecha futura, en orden: Año, Mes, Día.
    */ 
   public int[] futureDays(Date date, int daysFuture) {
     int[] resultDate = date.toArray();
     
+    //La condición de parada del llamado recursivo termina cuando ya no hay más días que sumar para encontrar la fecha buscada.
     if(daysFuture <= 0){
       return resultDate;
+
+    //Se realiza un llamado recursivo al metodo que averigua la fecha del dia siguiente según la cantidad que daysFuture indique
     }else{
       String futureDate = nextDay(date.getYear(), date.getMonth(), date.getDay());
       String[] parts = futureDate.split(", ");
