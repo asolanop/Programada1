@@ -325,9 +325,9 @@ public class GregorianCalendar {
   
   
   /**
-   * Determina la cantidad de días transcurridos para una fecha a partir del año 0.
+   * Determina la cantidad de días transcurridos para una fecha a partir del año 1582 (inicio del calendario Gregoriano).
    * @param date: Fecha a calcularle la cantidad de dias totales
-   * @return entero que representa los días transcurridos desde el año 0 hasta la fecha dada.
+   * @return entero que representa los días transcurridos desde el año 1582 hasta la fecha dada.
    */
   public int countDaysOfDate(Date date) {
     //cantidad de días en total antes del año evaluado (sin contar días extra por años bisiestos) según año de la fecha
