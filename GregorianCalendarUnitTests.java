@@ -189,6 +189,7 @@ public class GregorianCalendarUnitTests {
     assertEquals(gc.nextDay(2031,11,20), "2031, 11, 21");
     assertEquals(gc.nextDay(2068,12,31), "2069, 1, 1");
     assertEquals(gc.nextDay(2068,12,20), "2068, 12, 21");
+    assertEquals(gc.nextDay(2068,0,20), "Fecha invalida");
   }
   
   @Test
