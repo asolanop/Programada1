@@ -3,7 +3,111 @@ import static org.junit.Assert.*;
 
 
 public class GregorianCalendarUnitTests {
+  
+  @Test
+  public void previousDayTest() {
+    GregorianCalendar gc = new GregorianCalendar();
+    assertArrayEquals(gc.previousDay(2018,1,1), new int[] {2017,12,31}); 
+    assertArrayEquals(gc.previousDay(2018,1,5), new int[] {2018,1,4});
+    assertArrayEquals(gc.previousDay(2018,2,1), new int[] {2018,1,31});
+    assertArrayEquals(gc.previousDay(2018,2,20), new int[] {2018,2,19});
+    assertArrayEquals(gc.previousDay(2016,2,29), new int[] {2016,2,28});
+    assertArrayEquals(gc.previousDay(2018,2,29), new int[] {-1,-1,-1});
+    assertArrayEquals(gc.previousDay(2016,2,31), new int[] {-1,-1,-1});
+    assertArrayEquals(gc.previousDay(2016,3,1), new int[] {2016,2,29});
+    assertArrayEquals(gc.previousDay(2018,3,1), new int[] {2018,2,28});
+    assertArrayEquals(gc.previousDay(2018,3,5), new int[] {2018,3,4});
+    assertArrayEquals(gc.previousDay(2016,6,1), new int[] {2016,5,31});
+    assertArrayEquals(gc.previousDay(2016,6,20), new int[] {2016,6,19});
+    assertArrayEquals(gc.previousDay(2016,6,31), new int[] {-1,-1,-1});
+    assertArrayEquals(gc.previousDay(2016,7,1), new int[] {2016,6,30});
+    assertArrayEquals(gc.previousDay(2016,7,20), new int[] {2016,7,19});
+  }
+  
+  @Test
+  public void previousDateTest() {
+    GregorianCalendar gc = new GregorianCalendar();
+    assertArrayEquals(gc.previousDate(new Date(2018, 1, 1), 0), new int[] {2018, 1, 1}); 
+    assertArrayEquals(gc.previousDate(new Date(2018, 1, 1), 1), new int[] {2017,12,31});  
+    assertArrayEquals(gc.previousDate(new Date(2018, 1, 1), 365), new int[] {2017, 1, 1}); 
+    assertArrayEquals(gc.previousDate(new Date(2018, 1, 1), 366), new int[] {2016,12,31}); 
+    assertArrayEquals(gc.previousDate(new Date(2016, 1, 1), 367), new int[] {2014,12,30}); 
+    assertArrayEquals(gc.previousDate(new Date(2016, 1, 20), 7), new int[] {2016,1,13}); 
+    assertArrayEquals(gc.previousDate(new Date(2016, 1, 31), 32), new int[] {2015,12,30}); 
+    assertArrayEquals(gc.previousDate(new Date(2018, 2, 1), 1), new int[] {2018,1,31}); 
+    assertArrayEquals(gc.previousDate(new Date(2018, 2, 20), 7), new int[] {2018,2,13}); 
+    assertArrayEquals(gc.previousDate(new Date(2018, 2, 28), 32), new int[] {2018,1,27}); 
+    assertArrayEquals(gc.previousDate(new Date(2016, 2, 29), 366), new int[] {2015,2,28}); 
+    assertArrayEquals(gc.previousDate(new Date(2016, 2, 29), 0), new int[] {2016,2,29}); 
+    assertArrayEquals(gc.previousDate(new Date(2018, 3, 1), 1), new int[] {2018,2,28}); 
+    assertArrayEquals(gc.previousDate(new Date(2016, 3, 1), 1), new int[] {2016,2,29}); 
+    assertArrayEquals(gc.previousDate(new Date(2016, 3, 20), 7), new int[] {2016,3,13}); 
+    assertArrayEquals(gc.previousDate(new Date(2016, 3, 31), 367), new int[] {2015,3,30}); 
+    assertArrayEquals(gc.previousDate(new Date(2018, 6, 1), 7), new int[] {2018,5,25}); 
+    assertArrayEquals(gc.previousDate(new Date(2018, 6, 20), 32), new int[] {2018,5,19}); 
+    assertArrayEquals(gc.previousDate(new Date(2016, 6, 30), 366), new int[] {2015,6,30}); 
+    assertArrayEquals(gc.previousDate(new Date(2018, 7, 1), 7), new int[] {2018,6,24}); 
+    assertArrayEquals(gc.previousDate(new Date(2018, 7, 20), 0), new int[] {2018,7,20}); 
+    assertArrayEquals(gc.previousDate(new Date(2018, 7, 31), 365), new int[] {2017,7,31}); 
+  }
+  
+  @Test
+  public void countDaysTest() {
+    GregorianCalendar gc = new GregorianCalendar();
+    assertEquals(gc.countDaysOfDate( new Date(1582, 1, 1)), 1);
+    assertEquals(gc.countDaysOfDate( new Date(1582, 1, 31)), 31);
+    assertEquals(gc.countDaysOfDate( new Date(1582, 2, 1)), 32);
+    assertEquals(gc.countDaysOfDate( new Date(1582, 2, 28)), 59);
+    assertEquals(gc.countDaysOfDate( new Date(1582, 3, 1)), 60);
+    assertEquals(gc.countDaysOfDate( new Date(1582, 12, 31)), 365);
+    assertEquals(gc.countDaysOfDate( new Date(1583, 1, 1)), 366);
     
+    assertEquals(gc.countDaysOfDate( new Date(2016,1,1)), 158516);
+    assertEquals(gc.countDaysOfDate( new Date(2016,1,20)), 158535);
+    assertEquals(gc.countDaysOfDate( new Date(2016,1,31)), 158546);
+    assertEquals(gc.countDaysOfDate( new Date(2016,2,1)), 158547);
+    assertEquals(gc.countDaysOfDate( new Date(2016,2,20)), 158566);
+    assertEquals(gc.countDaysOfDate( new Date(2016,2,29)), 158575);
+    assertEquals(gc.countDaysOfDate( new Date(2016,3,1)), 158576);
+    assertEquals(gc.countDaysOfDate( new Date(2016,3,20)), 158595);
+    assertEquals(gc.countDaysOfDate( new Date(2016,6,20)), 158687);
+    assertEquals(gc.countDaysOfDate( new Date(2016,6,30)), 158697);
+    assertEquals(gc.countDaysOfDate( new Date(2016,7,1)), 158698);
+    assertEquals(gc.countDaysOfDate( new Date(2016,12,1)), 158851);
+    assertEquals(gc.countDaysOfDate( new Date(2016,12,20)), 158870);
+    assertEquals(gc.countDaysOfDate( new Date(2016,12,31)), 158881);
+    assertEquals(gc.countDaysOfDate( new Date(2017,1,1)), 158882);
+    assertEquals(gc.countDaysOfDate( new Date(2017,1,20)), 158901);
+    assertEquals(gc.countDaysOfDate( new Date(2017,1,31)), 158912);
+    assertEquals(gc.countDaysOfDate( new Date(2017,2,1)), 158913);
+    assertEquals(gc.countDaysOfDate( new Date(2017,2,20)), 158932);
+    assertEquals(gc.countDaysOfDate( new Date(2017,2,28)), 158940);
+    assertEquals(gc.countDaysOfDate( new Date(2017,3,1)), 158941);
+    assertEquals(gc.countDaysOfDate( new Date(2017,3,20)), 158960);
+    assertEquals(gc.countDaysOfDate( new Date(2017,6,20)), 159052);
+    assertEquals(gc.countDaysOfDate( new Date(2017,6,30)), 159062);
+    assertEquals(gc.countDaysOfDate( new Date(2017,7,1)), 159063);
+    assertEquals(gc.countDaysOfDate( new Date(2017,12,1)), 159216);
+    assertEquals(gc.countDaysOfDate( new Date(2017,12,20)), 159235);
+    assertEquals(gc.countDaysOfDate( new Date(2017,12,31)), 159246);
+    assertEquals(gc.countDaysOfDate( new Date(2018,1,1)), 159247);
+  }
+  
+  @Test 
+  public void daysBetweenDatesTest() {
+    GregorianCalendar gc = new GregorianCalendar();
+    assertEquals(gc.daysBetweenDates(new Date(2016,1,1), new Date(2015,1,1)), 365);
+    assertEquals(gc.daysBetweenDates(new Date(2011,6,20), new Date(2013,6,20)), 731);
+    assertEquals(gc.daysBetweenDates(new Date(2016,3,1), new Date(2016,3,1)), 0);    
+    assertEquals(gc.daysBetweenDates(new Date(2011,2,29), new Date(2013,6,20)), -1);    
+    assertEquals(gc.daysBetweenDates(new Date(2011,2,28), new Date(2013,6,31)), -1);    
+    assertEquals(gc.daysBetweenDates(new Date(2016,13,1), new Date(2016,2,31)), -1);    
+  }
+  
+  
+  
+  
+  //Pruebas de los métodos pasados. Se mantenien por completitud de las pruebas.
   @Test
   public void isLeapYearTest() {
     GregorianCalendar gc = new GregorianCalendar();
@@ -15,7 +119,7 @@ public class GregorianCalendarUnitTests {
   }
   
   @Test
-  public void dateIsValid() {
+  public void dateIsValidTest() {
     GregorianCalendar gc = new GregorianCalendar();
     assertEquals (gc.dateIsValid(2000,1,25), true);
     assertEquals (gc.dateIsValid(2000,1,31), true);
@@ -57,10 +161,11 @@ public class GregorianCalendarUnitTests {
   }
   
   @Test
-  public void nextDay() {
+  public void nextDayTest() {
     GregorianCalendar gc = new GregorianCalendar();
     assertEquals(gc.nextDay(2000,1,31), "2000, 2, 1");  
     assertEquals(gc.nextDay(2000,1,20), "2000, 1, 21");
+   assertEquals(gc.nextDay(2000,2,20), "2000, 2, 21");
     assertEquals(gc.nextDay(2000,2,28), "2000, 2, 29");
     assertEquals(gc.nextDay(1700,2,28), "1700, 3, 1");
     assertEquals(gc.nextDay(2000,2,29), "2000, 3, 1");
@@ -154,6 +259,6 @@ public class GregorianCalendarUnitTests {
     assertEquals(gc.dayOfWeek(1783,2,28), 5);
     assertEquals(gc.dayOfWeek(1783,3,1), 6);
   }
- 
+  
   
 }

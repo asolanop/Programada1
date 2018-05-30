@@ -39,10 +39,20 @@ public class GregorianCalendar {
     if(isLeapYear(year)) {
       if(month == FEBRUARY) {
         //Toma en cuante el dia extra de febrero en annos bisiestos al calcular la valides de la fecha.
-        return day >= JANUARY && day <= DAYS_OF_MONTH[FEBRUARY] + 1;
+        return day <= DAYS_OF_MONTH[FEBRUARY] + 1;
       }
     }
     return day >= JANUARY && day <= DAYS_OF_MONTH[month];    
+  }
+  
+  /**
+   * Wrapper sobre dateIsValid(int, int, int) la cual recibe un objeto Date y lo pasa a la función inicial
+   * para simplificar el desempaquetado del objeto Date al quere validarlo
+   * @param date: Objeto Date que representa la fecha que se desea validar
+   * @return: True si la fecha es valida, False en otro caso.
+   */
+  public boolean dateIsValid(final Date date) {
+    return dateIsValid(date.getYear(), date.getMonth(), date.getDay());
   }
   
   
@@ -167,7 +177,7 @@ public class GregorianCalendar {
    * @return: Un arreglo de enteros con la fecha del dÃ­a anterior en formato: [A][M][D]; Arreglo con 
    *          celdas en "-1" en otro caso
    */
-  public int[] previewsDay(final int year, final int month, final int day) {
+  public int[] previousDay(final int year, final int month, final int day) {
     if(!dateIsValid(year, month, day)) {
       int error[] = new int[3];
       error[0] = -1; error[1] = -1; error[2] = -1;
@@ -178,19 +188,19 @@ public class GregorianCalendar {
       case JANUARY:
         if(day > 1) {
         // Resta un dia a los dias del mes.
-        nextDay = getPreviewsDate(year, month, day, ACTION_SUBSTRACT_DAY);
+        nextDay = getPreviousDate(year, month, day, ACTION_SUBSTRACT_DAY);
       } else {
         // Resta un anno, actualiza el dia del mes y el mes en Diciembre.
-        nextDay = getPreviewsDate(year, month, day, ACTION_SUBSTRACT_YEAR);
+        nextDay = getPreviousDate(year, month, day, ACTION_SUBSTRACT_YEAR);
       }
       break;
       default:
         if(day > 1) {
         // Resta un dia a los dias del mes.
-        nextDay = getPreviewsDate(year, month, day, ACTION_SUBSTRACT_DAY);
+        nextDay = getPreviousDate(year, month, day, ACTION_SUBSTRACT_DAY);
       } else {
         // Resta un mes.
-        nextDay = getPreviewsDate(year, month, day, ACTION_SUBSTRACT_MONTH);
+        nextDay = getPreviousDate(year, month, day, ACTION_SUBSTRACT_MONTH);
       }
       break;
     }
@@ -209,7 +219,7 @@ public class GregorianCalendar {
    *                ACTION_SUBSTRACT_DAY = resta uno al dia, mantener los demas valores
    * @return: Retorna la nueva tupla con la fecha del dia siguiente.
    */ 
-  public int[] getPreviewsDate(final int year, final int month, final int day, final int action) {
+  public int[] getPreviousDate(final int year, final int month, final int day, final int action) {
     int newYear = -1, newMonth = -1, newDay = -1;
     switch(action) {
       case ACTION_SUBSTRACT_YEAR:
@@ -256,7 +266,7 @@ public class GregorianCalendar {
    * @returns Arreglo de 3 enteros que representa la fecha pasada, donde la celda 0 del arreglo representa el anno
    *          la celda 1 representa el mes y la celda 2 representa el día del mes
    */ 
-  public int[] previewsDays(Date date, int daysPast) {
+  public int[] previousDate(Date date, int daysPast) {
     //Obtiene la fecha en formato de arreglo: [ANNO],[MES],[DIA].
     int[] resultDate = date.toArray();
     
@@ -266,8 +276,8 @@ public class GregorianCalendar {
     }else{
       //Si faltan días por retroceder se llama a pastDate para recuperar el día pasado inmediato y se llama recursivamente
       //a la función previewsDays con la nueva fecha.
-      int[] pastDate = previewsDay(date.getYear(), date.getMonth(), date.getDay());
-      return previewsDays(new Date(pastDate), daysPast - 1); 
+      int[] pastDate = previousDay(date.getYear(), date.getMonth(), date.getDay());
+      return previousDate(new Date(pastDate), daysPast - 1); 
     } 
   }
   
@@ -321,7 +331,7 @@ public class GregorianCalendar {
    */
   public int countDaysOfDate(Date date) {
     //cantidad de días en total antes del año evaluado (sin contar días extra por años bisiestos) según año de la fecha
-    int totalDaysDate = (date.getYear() - 1)  * DAYS_OF_BASE_YEAR;
+    int totalDaysDate = ((date.getYear() - GREGORIAN_STARTING_YEAR))  * DAYS_OF_BASE_YEAR;
     
     //cantidad de días en total antes de la fecha evaluada para el año de la fecha, según mes de la fecha
     for (int i=1; i< date.getMonth(); i++)
@@ -369,7 +379,8 @@ public class GregorianCalendar {
    * @return: Entero que representa los días que hay entre dos fechas dadas
    */
   public int daysBetweenDates(Date date1, Date date2) {
-    
+    if(!dateIsValid(date1) || !dateIsValid(date2)) return -1;
+      
     //Se calculan la cantidad de días totales para ambas fechas
     int totalDaysDate1 = countDaysOfDate(date1);
     int totalDaysDate2 = countDaysOfDate(date2);
@@ -385,21 +396,23 @@ public class GregorianCalendar {
   public static void main(String [] args) {
     String [] dayOfWeek = {"Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"};
     GregorianCalendar gc = new GregorianCalendar();
-    int year = 1982, month = 9, day = 14;
+    int year = 2000, month = 2, day = 1;
     System.out.println("La fecha: " + year + ", " + month + ", " + day + " es válida? " + gc.dateIsValid(year, month, day));
     System.out.println("Año es bisiesto?: " + gc.isLeapYear(year) );
     System.out.println("Día de la semana es: " + dayOfWeek[gc.dayOfWeek(year,month, day)]);
     System.out.println("La fecha del día siguiente es: " + gc.nextDay(year,month, day));
     
-    Date date1 = new Date(2000, 2, 1);
+    Date date1 = new Date(year, month, day);
     Date date2 = new Date(2004, 4, 5);
+    int daysFuture = 1;
+    int daysPast = 366;
+    System.out.println("La fecha 2: " + date2.getYear() + ", " + date2.getMonth() + ", " + date2.getDay() + " es válida? " + gc.dateIsValid(date2));
+    System.out.println("Día(s) entre las fehcas: " + gc.daysBetweenDates(date1, date2));
+    int result[] =  gc.futureDays(date2, 1);
+    System.out.println(daysFuture + " día(s) futuros para al fecha 2: " + result[0] + ", " + result[1] + ", " + result[2]);
     
-    System.out.println(gc.daysBetweenDates(date1, date2));
-    int result[] = new int [3];
-    result  = gc.futureDays(date2, 1);
-    System.out.println(result[0] + ", " + result[1] + ", " + result[2]);
+    result  = gc.previousDate(date2, 366);
+    System.out.println(daysPast + " dia(s) previos para al fecha 2: " + result[0] + ", " + result[1] + ", " + result[2]);
     
-    result  = gc.previewsDays(date2, 366);
-    System.out.println("Dias previos: " + result[0] + ", " + result[1] + ", " + result[2]);
   }
 }

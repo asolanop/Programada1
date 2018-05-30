@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GregorianCalendar.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Coverage Summary</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">GregorianCalendar.java</span></div><h1>GregorianCalendar.java</h1><pre class="source lang-java linenums">/**
+ * Clase GregorianCalendar
+ * Brinda funciones para realizar calculos de fechas del calendario Gregoriano.
+ */
+
+<span class="fc" id="L6">public class GregorianCalendar {</span>
+<span class="fc" id="L7">  public final int GREGORIAN_STARTING_YEAR = 1582;</span>
+<span class="fc" id="L8">  public final int DAYS_OF_WEEK = 7;</span>
+<span class="fc" id="L9">  public final int DAYS_OF_BASE_YEAR = 365;</span>
+<span class="fc" id="L10">  public final int DAYS_OF_CENTURY = 100;</span>
+<span class="fc" id="L11">  public final int JANUARY = 1, FEBRUARY = 2, MARCH = 3, DECEMBER = 12;</span>
+<span class="fc" id="L12">  public final int DAYS_OF_MONTH[] = {-1, 31, 28, 31, 30 ,31, 30, 31, 31, 30, 31, 30, 31}; //Empieza con -1 para calzar con los numeros de mes.</span>
+<span class="fc" id="L13">  public final int CARROLS_MAGIC_NUMBERS_FOR_MONTHS[] = {-1, 0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5}; // Numeros del mes utilizados en el algoritmo de Lewis Carrol para calcular el dia de la semana. Empieza con -1 para calzar con los numeros de mes.</span>
+<span class="fc" id="L14">  public final int ACTION_ADD_DAY = 1, ACTION_ADD_MONTH = 2, ACTION_ADD_YEAR = 3; // Constantes represenan las acciones a tomar al definir le nueva fecha del dia siguiente, para el metodo nextDay</span>
+<span class="fc" id="L15">  public final int ACTION_SUBSTRACT_DAY = 1, ACTION_SUBSTRACT_MONTH = 2, ACTION_SUBSTRACT_YEAR = 3; // Constantes represenan las acciones a tomar al definir le nueva fecha del dia anterior, para el metodo previewsDay</span>
+  
+  
+  /**
+   * Determina si un anno es bisiesto o no: Es bisiesto al ser divisible por 400 O por 4 pero no por 100
+   * @param year: Anno en cuestion para determinar si es bisiesto o no.
+   * @return: True si el anno es bisiesto. False si no lo es.
+   */
+  public boolean isLeapYear(final int year) {
+<span class="fc bfc" id="L24" title="All 6 branches covered.">    return ((year % 400 == 0) || ( year % 4 == 0  &amp;&amp; year % 100 != 0 ));</span>
+  }
+  
+  
+  /**
+   * Determina si la fecha ingresada es valida para el calendario gregoriano.
+   * @param year: Determina si el anno ingresado es valido, i.e mayor que 1582
+   * @param month: Mes del anno. Determina si el mes es valido, i.e si se encuentra entre 1 y 12
+   * @param day: Determina si el dia, con respecto al mes es valido. Es decir, si es igual o menor a la
+   * cantidad de dias que tiene el mes del anno en cuestion.
+   * @return: True si la fecha es valida, False en otro caso.
+   */
+  public boolean dateIsValid(final int year, final int month, final int day) {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">    if(year &lt; GREGORIAN_STARTING_YEAR) return false;</span>
+<span class="fc bfc" id="L38" title="All 4 branches covered.">    if(month &lt; JANUARY || month &gt; DECEMBER) return false;</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">    if(isLeapYear(year)) {</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">      if(month == FEBRUARY) {</span>
+        //Toma en cuante el dia extra de febrero en annos bisiestos al calcular la valides de la fecha.
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        return day &lt;= DAYS_OF_MONTH[FEBRUARY] + 1;</span>
+      }
+    }
+<span class="fc bfc" id="L45" title="All 4 branches covered.">    return day &gt;= JANUARY &amp;&amp; day &lt;= DAYS_OF_MONTH[month];    </span>
+  }
+  
+  /**
+   * Wrapper sobre dateIsValid(int, int, int) la cual recibe un objeto Date y lo pasa a la funci�n inicial
+   * para simplificar el desempaquetado del objeto Date al quere validarlo
+   * @param date: Objeto Date que representa la fecha que se desea validar
+   * @return: True si la fecha es valida, False en otro caso.
+   */
+  public boolean dateIsValid(final Date date) {
+<span class="fc" id="L55">    return dateIsValid(date.getYear(), date.getMonth(), date.getDay());</span>
+  }
+  
+  
+  /**
+   * Determina el dia siguiente de la fecha ingresada.
+   * @param year: Año utilizado para determinar la fecha del dia siguiente. Tambien utilizado para saber
+   * si el anno en cuestion es bisiesto
+   * @param month: Mes para determiar la fecha del dia siguiente
+   * @param day: Dia del mes utilizado para determiar la fecha del dia siguiente
+   * @return: Una hilera con la fecha del día sigueinte en formato: A, M, D; Hilera de aviso en caso de fecha
+   * invalida
+   */
+  public String nextDay(final int year, final int month, final int day) {
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">    if(!dateIsValid(year, month, day)) return &quot;Fecha invalida&quot;;</span>
+<span class="fc" id="L70">    String nextDay = &quot;&quot;;</span>
+<span class="fc bfc" id="L71" title="All 3 branches covered.">    switch (month) {</span>
+      case FEBRUARY:
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if(!isLeapYear(year)) {</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if(day &lt; DAYS_OF_MONTH[FEBRUARY]) {</span>
+          // Agrega un dia a los dias del mes.
+<span class="nc" id="L76">          nextDay = getNewDate(year, month, day, ACTION_ADD_DAY);</span>
+        } else {
+          // Agrega un mes y reinicia el dia del mes en 1.
+<span class="fc" id="L79">          nextDay = getNewDate(year, month, day, ACTION_ADD_MONTH);</span>
+        }
+      } else { //Anno bisiesto
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        if(day &lt; DAYS_OF_MONTH[FEBRUARY] + 1) {</span>
+          // Agrega un dia a los dias de febrero.
+<span class="fc" id="L84">          nextDay = getNewDate(year, month, day, ACTION_ADD_DAY);</span>
+        } else {
+          // Agrega un mes y reinicia el dia del mes en 1.
+<span class="fc" id="L87">          nextDay = getNewDate(year, month, day, ACTION_ADD_MONTH);</span>
+        }
+      }
+<span class="fc" id="L90">      break;</span>
+      case DECEMBER:
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if(day &lt; DAYS_OF_MONTH[DECEMBER]) {</span>
+        // Agrega un dia a los dias del mes.
+<span class="fc" id="L94">        nextDay = getNewDate(year, month, day, ACTION_ADD_DAY);</span>
+      } else {
+        // Agrega un anno y reinicia el dia del mes en 1 y el mes en enero.
+<span class="fc" id="L97">        nextDay = getNewDate(year, month, day, ACTION_ADD_YEAR);</span>
+      }
+<span class="fc" id="L99">      break;</span>
+      default:
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if(day &lt; DAYS_OF_MONTH[month]) {</span>
+        // Agrega un dia a los dias del mes.
+<span class="fc" id="L103">        nextDay = getNewDate(year, month, day, ACTION_ADD_DAY);</span>
+      } else {
+        // Agrega un mes y reinicia el dia del mes en 1.
+<span class="fc" id="L106">        nextDay = getNewDate(year, month, day, ACTION_ADD_MONTH);</span>
+      }
+      break;
+    }
+<span class="fc" id="L110">    return nextDay;</span>
+  }
+  
+  
+  /**
+   * Retorna la nueva fecha para el dia siguiente, de acuerdo a la tupla ingresada y la accion requerida
+   * @param year: Anno inicial para determinar la fecha del dia siguiente
+   * @param month: Mes inicial para determiar la fecha del dia siguiente
+   * @param day: Dia del mes inicial para determiar la fecha del dia siguiente
+   * @param action: Accion a tomar con los dias ingresados para poder dar la nueva fecha. Tres posibles valores son:
+   *                ACTION_ADD_YEAR = a�adir uno al a�o, resetear el dia en uno y el mes en enero
+   *                ACTION_ADD_MONTH = a�adir uno al mes, resetear el dia en 1
+   *                ACTION_ADD_DAY = a�adir uno al dia, mantener los demas valores
+   * @return: Retorna la nueva tupla con la fecha del dia siguiente.
+   */ 
+  public String getNewDate(final int year, final int month, final int day, final int action) {
+    int newYear, newMonth, newDay;
+<span class="fc bfc" id="L127" title="All 3 branches covered.">    switch(action) {</span>
+      case ACTION_ADD_YEAR:
+        // Agrega un anno y reinicia el dia del mes en 1 y el mes en enero.
+<span class="fc" id="L130">        newDay = 1;</span>
+<span class="fc" id="L131">        newMonth = JANUARY;</span>
+<span class="fc" id="L132">        newYear = year+1;</span>
+<span class="fc" id="L133">        break;</span>
+      case ACTION_ADD_MONTH:
+        // Agrega un mes y reinicia el dia del mes en 1.
+<span class="fc" id="L136">        newDay = 1;</span>
+<span class="fc" id="L137">        newMonth = month+1;</span>
+<span class="fc" id="L138">        newYear = year;</span>
+<span class="fc" id="L139">        break;</span>
+      default:
+        // Agrega un dia a los dias del mes.
+<span class="fc" id="L142">        newDay = day+1;</span>
+<span class="fc" id="L143">        newMonth = month;</span>
+<span class="fc" id="L144">        newYear = year;</span>
+        break;
+    }
+<span class="fc" id="L147">    return newYear + &quot;, &quot; + newMonth + &quot;, &quot; + newDay;</span>
+  }
+  
+  
+  /**
+   * 
+   * 
+   */ 
+  public int[] futureDays(Date date, int daysFuture) {
+<span class="nc" id="L156">    int[] resultDate = date.toArray();</span>
+    
+<span class="nc bnc" id="L158" title="All 2 branches missed.">    if(daysFuture &lt;= 0){</span>
+<span class="nc" id="L159">      return resultDate;</span>
+    }else{
+<span class="nc" id="L161">      String futureDate = nextDay(date.getYear(), date.getMonth(), date.getDay());</span>
+<span class="nc" id="L162">      String[] parts = futureDate.split(&quot;, &quot;);</span>
+<span class="nc" id="L163">      int year = Integer.parseInt(parts[0]);</span>
+<span class="nc" id="L164">      int month = Integer.parseInt(parts[1]);</span>
+<span class="nc" id="L165">      int day = Integer.parseInt(parts[2]);</span>
+<span class="nc" id="L166">      return futureDays(new Date(year, month, day), daysFuture - 1); </span>
+    } 
+  }
+  
+  
+  /**
+   * Determina el dia pasado de la fecha ingresada.
+   * @param year: Año utilizado para determinar la fecha del dia anterior. Tambien utilizado para saber
+   * si el anno en cuestion es bisiesto
+   * @param month: Mes para determiar la fecha del dia anterior
+   * @param day: Dia del mes utilizado para determiar la fecha del dia anterior
+   * @return: Un arreglo de enteros con la fecha del día anterior en formato: [A][M][D]; Arreglo con 
+   *          celdas en &quot;-1&quot; en otro caso
+   */
+  public int[] previousDay(final int year, final int month, final int day) {
+<span class="fc bfc" id="L181" title="All 2 branches covered.">    if(!dateIsValid(year, month, day)) {</span>
+<span class="fc" id="L182">      int error[] = new int[3];</span>
+<span class="fc" id="L183">      error[0] = -1; error[1] = -1; error[2] = -1;</span>
+<span class="fc" id="L184">      return error;</span>
+    } 
+    int[] nextDay;
+<span class="fc bfc" id="L187" title="All 2 branches covered.">    switch (month) {</span>
+      case JANUARY:
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        if(day &gt; 1) {</span>
+        // Resta un dia a los dias del mes.
+<span class="fc" id="L191">        nextDay = getPreviousDate(year, month, day, ACTION_SUBSTRACT_DAY);</span>
+      } else {
+        // Resta un anno, actualiza el dia del mes y el mes en Diciembre.
+<span class="fc" id="L194">        nextDay = getPreviousDate(year, month, day, ACTION_SUBSTRACT_YEAR);</span>
+      }
+<span class="fc" id="L196">      break;</span>
+      default:
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        if(day &gt; 1) {</span>
+        // Resta un dia a los dias del mes.
+<span class="fc" id="L200">        nextDay = getPreviousDate(year, month, day, ACTION_SUBSTRACT_DAY);</span>
+      } else {
+        // Resta un mes.
+<span class="fc" id="L203">        nextDay = getPreviousDate(year, month, day, ACTION_SUBSTRACT_MONTH);</span>
+      }
+      break;
+    }
+<span class="fc" id="L207">    return nextDay;</span>
+  }
+  
+  
+  /**
+   * Retorna la nueva fecha para el dia anterior, de acuerdo a la tupla ingresada y la accion requerida
+   * @param year: Anno inicial para determinar la fecha del dia anterior
+   * @param month: Mes inicial para determiar la fecha del dia anterior
+   * @param day: Dia del mes inicial para determiar la fecha del dia anterior
+   * @param action: Accion a tomar con los dias ingresados para poder dar la nueva fecha. Tres posibles valores son:
+   *                ACTION_SUBSTRACT_YEAR = resta uno al a�o, coloca el d�a en 31 y el mes en diciembre
+   *                ACTION_SUBSTRACT_MONTH = resta uno al mes, resetear el dia en la cantidad de d�as del nuevo mes
+   *                ACTION_SUBSTRACT_DAY = resta uno al dia, mantener los demas valores
+   * @return: Retorna la nueva tupla con la fecha del dia siguiente.
+   */ 
+  public int[] getPreviousDate(final int year, final int month, final int day, final int action) {
+<span class="fc" id="L223">    int newYear = -1, newMonth = -1, newDay = -1;</span>
+<span class="fc bfc" id="L224" title="All 3 branches covered.">    switch(action) {</span>
+      case ACTION_SUBSTRACT_YEAR:
+        // Resta un anno y coloca el dia del mes al final del nuevo mes y el mes en diciembre.
+<span class="fc" id="L227">        newDay = DAYS_OF_MONTH[DECEMBER];</span>
+<span class="fc" id="L228">        newMonth = DECEMBER;</span>
+<span class="fc" id="L229">        newYear = year-1;</span>
+<span class="fc" id="L230">        break;</span>
+      case ACTION_SUBSTRACT_MONTH:
+        // Resta un mes y coloca el dia del mes al final del nuevo mes.
+<span class="fc bfc" id="L233" title="All 2 branches covered.">        if(month == MARCH) {</span>
+        //Si el mes acutal es marzo debe colocarse 29 como d�a del mes si el anno es bisiesto y 28 en caso de que no lo sea.
+<span class="fc bfc" id="L235" title="All 2 branches covered.">        if(isLeapYear(year)) {</span>
+<span class="fc" id="L236">          newDay = DAYS_OF_MONTH[FEBRUARY] + 1;</span>
+        } else {
+<span class="fc" id="L238">          newDay = DAYS_OF_MONTH[FEBRUARY];</span>
+        }
+<span class="fc" id="L240">        newMonth = FEBRUARY;</span>
+      } else {
+<span class="fc" id="L242">        newMonth = month - 1;</span>
+<span class="fc" id="L243">        newDay = DAYS_OF_MONTH[newMonth];</span>
+      }
+<span class="fc" id="L245">      newYear = year;</span>
+<span class="fc" id="L246">      break;</span>
+      default:
+        // Resta un dia a los dias del mes.
+<span class="fc" id="L249">        newMonth = month;</span>
+<span class="fc" id="L250">        newDay = day-1;</span>
+<span class="fc" id="L251">        newYear = year;</span>
+        break;
+    }
+<span class="fc" id="L254">    int newDate[] = new int[3];</span>
+<span class="fc" id="L255">    newDate[0] = newYear; </span>
+<span class="fc" id="L256">    newDate[1] = newMonth;</span>
+<span class="fc" id="L257">    newDate[2] = newDay;</span>
+<span class="fc" id="L258">    return newDate;</span>
+  }
+  
+  
+  /**
+   * Determina una fecha en N d�as en el pasado de acuerdo al par�metro ingresado.
+   * @param date: La fecha base para calcular la fecha pasada
+   * @param daysPast: Entero que determina cuantos d�as en el pasado se debe calcular.
+   * @returns Arreglo de 3 enteros que representa la fecha pasada, donde la celda 0 del arreglo representa el anno
+   *          la celda 1 representa el mes y la celda 2 representa el d�a del mes
+   */ 
+  public int[] previousDate(Date date, int daysPast) {
+    //Obtiene la fecha en formato de arreglo: [ANNO],[MES],[DIA].
+<span class="fc" id="L271">    int[] resultDate = date.toArray();</span>
+    
+<span class="fc bfc" id="L273" title="All 2 branches covered.">    if(daysPast &lt;= 0){</span>
+      //Si ya se contaron todos los d�as a retroceder se retorna la fecha actual
+<span class="fc" id="L275">      return resultDate;</span>
+    }else{
+      //Si faltan d�as por retroceder se llama a pastDate para recuperar el d�a pasado inmediato y se llama recursivamente
+      //a la funci�n previewsDays con la nueva fecha.
+<span class="fc" id="L279">      int[] pastDate = previousDay(date.getYear(), date.getMonth(), date.getDay());</span>
+<span class="fc" id="L280">      return previousDate(new Date(pastDate), daysPast - 1); </span>
+    } 
+  }
+  
+  
+  /**
+   * Determina el dia de la semana, utilizando el algoritmo de Lewis Carrol. Sin embargo, como se utiliza el
+   * calendario gregoriano, no se hace diferenciacion para las fechas &quot;OldStyle&quot; del calendario ingles,
+   * los cuales utilizan el calendario jordian. Algoritmo tomado de:
+   * https://www.tandfonline.com/doi/abs/10.1080/10724117.2002.11974617
+   * @param year: Anno para calular el dia de la semana. Tambien utilizado para determinar si es bisiesto
+   * @param month: Mes para calcular el dia de la semana
+   * @param day: Dia el cual se indica a que dia de la semana corresponde.
+   * @return: Entero que representa un dia de la semana, siendo estos: : 0 = domingo, 1 = lunes, 2 = martes,
+   * 3 = miercoles, 4 = jueves, 5 = viernes, 6 = sabado. -1 si la fecha es invalida.
+   */
+  public int dayOfWeek(final int year, final int month, final int day) {
+<span class="pc bpc" id="L297" title="1 of 2 branches missed.">    if(!dateIsValid(year, month, day)) return -1;</span>
+    int centuryItem, yearItem, monthItem, dayItem;
+<span class="fc" id="L299">    int century = year / DAYS_OF_CENTURY;</span>
+<span class="fc" id="L300">    int overYears = year % DAYS_OF_CENTURY;</span>
+    
+<span class="fc" id="L302">    centuryItem = 2*(3 - (century%4)); // Numeros utilizados para la operacion tomados del algoritmo de Carrol.</span>
+<span class="pc bpc" id="L303" title="1 of 2 branches missed.">    if(centuryItem &gt;= DAYS_OF_WEEK) centuryItem = centuryItem % DAYS_OF_WEEK;</span>
+    
+<span class="fc" id="L305">    yearItem = overYears / DECEMBER + overYears % DECEMBER + (overYears % DECEMBER)/4;</span>
+<span class="fc bfc" id="L306" title="All 2 branches covered.">    if(yearItem &gt;= DAYS_OF_WEEK) yearItem = yearItem % DAYS_OF_WEEK;</span>
+    
+<span class="fc" id="L308">    monthItem = CARROLS_MAGIC_NUMBERS_FOR_MONTHS[month];</span>
+    
+<span class="fc" id="L310">    dayItem = day;</span>
+<span class="fc bfc" id="L311" title="All 2 branches covered.">    if(dayItem &gt;= DAYS_OF_WEEK) dayItem = dayItem % DAYS_OF_WEEK;</span>
+    
+<span class="fc" id="L313">    int dayOfWeek = ((centuryItem + yearItem + monthItem + dayItem) % DAYS_OF_WEEK);</span>
+<span class="fc bfc" id="L314" title="All 6 branches covered.">    if(isLeapYear(year) &amp;&amp;</span>
+       (month == JANUARY || month == FEBRUARY)) {
+      // Resta un dia a los annos binarios en caso de que el mes sea enero o febrero.
+<span class="fc bfc" id="L317" title="All 2 branches covered.">      if(dayOfWeek == 0) {</span>
+<span class="fc" id="L318">        dayOfWeek = DAYS_OF_WEEK - 1;</span>
+      } else {
+<span class="fc" id="L320">        dayOfWeek -= 1;</span>
+      }
+    }
+<span class="fc" id="L323">    return dayOfWeek;</span>
+  }
+  
+  
+  /**
+   * Determina la cantidad de d�as transcurridos para una fecha a partir del a�o 0.
+   * @param date: Fecha a calcularle la cantidad de dias totales
+   * @return entero que representa los d�as transcurridos desde el a�o 0 hasta la fecha dada.
+   */
+  public int countDaysOfDate(Date date) {
+    //cantidad de d�as en total antes del a�o evaluado (sin contar d�as extra por a�os bisiestos) seg�n a�o de la fecha
+<span class="fc" id="L334">    int totalDaysDate = ((date.getYear() - GREGORIAN_STARTING_YEAR))  * DAYS_OF_BASE_YEAR;</span>
+    
+    //cantidad de d�as en total antes de la fecha evaluada para el a�o de la fecha, seg�n mes de la fecha
+<span class="fc bfc" id="L337" title="All 2 branches covered.">    for (int i=1; i&lt; date.getMonth(); i++)</span>
+<span class="fc" id="L338">      totalDaysDate += DAYS_OF_MONTH[i];</span>
+    
+    //cantidad de d�as del mes de la fecha evaluada
+<span class="fc" id="L341">    totalDaysDate += date.getDay();</span>
+    
+    //Por �ltimo, se suma los d�as extra de los a�os bisiestos tomando en cuenta el a�o presente, si es bisiesto
+    //y si es una fecha que incluye febrero (mes &gt; febrero)
+<span class="fc" id="L345">    totalDaysDate += countLeapYears(date);</span>
+    
+<span class="fc" id="L347">    return totalDaysDate;</span>
+  }
+  
+  
+  /**
+   * 
+   * 
+   */
+  int countLeapYears(Date date){
+<span class="fc" id="L356">    int years = date.getYear();</span>
+<span class="fc" id="L357">    int daysOfLeapYears = 0;</span>
+    
+    //Se evalua cada a�o antes del dado para ver si es bisiesto, si lo es, se debe sumar un d�a a los d�as extra por bisiestos
+<span class="fc bfc" id="L360" title="All 2 branches covered.">    for (int i= GREGORIAN_STARTING_YEAR; i &lt; years; i++){</span>
+<span class="fc bfc" id="L361" title="All 2 branches covered.">      if(isLeapYear(i)){</span>
+<span class="fc" id="L362">        daysOfLeapYears += 1;</span>
+      } 
+    }
+    //Si la fecha inclu�a un mes mayor a febrero hay que tomar en cuenta el a�o en cuesti�n a la hora de sumar los d�as extra por bisiestos
+<span class="fc bfc" id="L366" title="All 2 branches covered.">    if (date.getMonth() &gt; FEBRUARY)</span>
+<span class="fc bfc" id="L367" title="All 2 branches covered.">      if(isLeapYear(years)){</span>
+<span class="fc" id="L368">      daysOfLeapYears += 1;</span>
+    } 
+    
+<span class="fc" id="L371">    return daysOfLeapYears;</span>
+  }
+  
+  
+  /**
+   * Determina la cantidad de d�as entre dos fechas dadas
+   * @param date1: Fecha n�mero 1 a ser evaluada con la fecha 2
+   * @param date2: Fecha n�mero 2 a ser evaluada con la fecha 1
+   * @return: Entero que representa los d�as que hay entre dos fechas dadas
+   */
+  public int daysBetweenDates(Date date1, Date date2) {
+<span class="fc bfc" id="L382" title="All 4 branches covered.">    if(!dateIsValid(date1) || !dateIsValid(date2)) return -1;</span>
+      
+    //Se calculan la cantidad de d�as totales para ambas fechas
+<span class="fc" id="L385">    int totalDaysDate1 = countDaysOfDate(date1);</span>
+<span class="fc" id="L386">    int totalDaysDate2 = countDaysOfDate(date2);</span>
+    
+    //Se saca la diferencia de d�as para determinar cu�ntos d�as hay entre las fechas dadas
+<span class="fc" id="L389">    int daysBetweenTwoDates = totalDaysDate1 - totalDaysDate2;</span>
+    
+    //Devuelve el n�mero positivo del c�lculo
+<span class="fc bfc" id="L392" title="All 2 branches covered.">    return (daysBetweenTwoDates &lt; 0 ? -daysBetweenTwoDates : daysBetweenTwoDates);</span>
+  }  
+  
+  
+  public static void main(String [] args) {
+<span class="nc" id="L397">    String [] dayOfWeek = {&quot;Domingo&quot;,&quot;Lunes&quot;,&quot;Martes&quot;,&quot;Miercoles&quot;,&quot;Jueves&quot;,&quot;Viernes&quot;,&quot;Sabado&quot;};</span>
+<span class="nc" id="L398">    GregorianCalendar gc = new GregorianCalendar();</span>
+<span class="nc" id="L399">    int year = 2000, month = 2, day = 1;</span>
+<span class="nc" id="L400">    System.out.println(&quot;La fecha: &quot; + year + &quot;, &quot; + month + &quot;, &quot; + day + &quot; es v�lida? &quot; + gc.dateIsValid(year, month, day));</span>
+<span class="nc" id="L401">    System.out.println(&quot;A�o es bisiesto?: &quot; + gc.isLeapYear(year) );</span>
+<span class="nc" id="L402">    System.out.println(&quot;D�a de la semana es: &quot; + dayOfWeek[gc.dayOfWeek(year,month, day)]);</span>
+<span class="nc" id="L403">    System.out.println(&quot;La fecha del d�a siguiente es: &quot; + gc.nextDay(year,month, day));</span>
+    
+<span class="nc" id="L405">    Date date1 = new Date(year, month, day);</span>
+<span class="nc" id="L406">    Date date2 = new Date(2004, 4, 5);</span>
+<span class="nc" id="L407">    int daysFuture = 1;</span>
+<span class="nc" id="L408">    int daysPast = 366;</span>
+<span class="nc" id="L409">    System.out.println(&quot;La fecha 2: &quot; + date2.getYear() + &quot;, &quot; + date2.getMonth() + &quot;, &quot; + date2.getDay() + &quot; es v�lida? &quot; + gc.dateIsValid(date2));</span>
+<span class="nc" id="L410">    System.out.println(&quot;D�a(s) entre las fehcas: &quot; + gc.daysBetweenDates(date1, date2));</span>
+<span class="nc" id="L411">    int result[] =  gc.futureDays(date2, 1);</span>
+<span class="nc" id="L412">    System.out.println(daysFuture + &quot; d�a(s) futuros para al fecha 2: &quot; + result[0] + &quot;, &quot; + result[1] + &quot;, &quot; + result[2]);</span>
+    
+<span class="nc" id="L414">    result  = gc.previousDate(date2, 366);</span>
+<span class="nc" id="L415">    System.out.println(daysPast + &quot; dia(s) previos para al fecha 2: &quot; + result[0] + &quot;, &quot; + result[1] + &quot;, &quot; + result[2]);</span>
+    
+<span class="nc" id="L417">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
