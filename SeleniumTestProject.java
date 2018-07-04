@@ -62,7 +62,9 @@ public class SeleniumTestProject {
             System.err.println("Caso TC1. Error ejecutando caso");
             System.err.println(e.getMessage());
         }
-                
+           
+        //No es el más recomendable de utilizar para selenium, pero como solo se desea esperar
+        //5 segundos, sin ninguna condición adicional, se utiliza para cumplir el caso.
         Thread.sleep(500);
 
         System.out.println("Caso TC1. Ejecutado correctamente");
