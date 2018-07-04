@@ -5,22 +5,33 @@
  */
 package seleniumtestproject;
 
-
-import java.util.concurrent.TimeUnit;
-import org.eclipse.jetty.util.log.Log;
 import org.junit.Assert;
-import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class SeleniumTestProject {
+    public static String HOME_PAGE = "http://demo.nopcommerce.com";
+    public static String[] CATEGORIES = {"Computers", "Electronics", "Apparel", 
+                        "Digital Downloads", "Books", "Jewelry", "Gift Cards"};
+    public static String[] CATEGORIES_URLS = {"http://demo.nopcommerce.com/computers", 
+                                "http://demo.nopcommerce.com/electronics", 
+                                "http://demo.nopcommerce.com/apparel", 
+                                "http://demo.nopcommerce.com/digital-downloads", 
+                                "http://demo.nopcommerce.com/books", 
+                                "http://demo.nopcommerce.com/jewelry", 
+                                "http://demo.nopcommerce.com/gift-cards"};
+    
+    
     public static void main(String[] args){
         System.setProperty("webdriver.chrome.driver", "/Users/andressolano/Desktop/Selenium/chromedriver/chromedriver");
         try {
+        //testOne();
         testTwo();
         } catch (Exception e) {
          e.printStackTrace();
@@ -33,7 +44,7 @@ public class SeleniumTestProject {
 
         WebDriver driver = new ChromeDriver();
 
-        driver.navigate().to("http://demo.nopcommerce.com");
+        driver.navigate().to("Home");
 
         String pageTitle = driver.getTitle();
         
@@ -43,9 +54,7 @@ public class SeleniumTestProject {
         } catch (org.junit.ComparisonFailure e) {
             System.out.println("El titulo es incorrecto: " + pageTitle);
         }
-        
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-        
+                
         Thread.sleep(500);
 
         
@@ -59,36 +68,34 @@ public class SeleniumTestProject {
         
 
         WebDriver driver = new ChromeDriver();
-        String categoria = "home";
+        String category = "Home";
+        
+        ExpectedCondition<Boolean> pageLoad = (WebDriver driver1) -> 
+                ((JavascriptExecutor) driver1).executeScript("return document.readyState").equals("complete");
+        
         try {
             
-        driver.navigate().to("http://demo.nopcommerce.com");
+        Wait wait = new WebDriverWait(driver, 10);
         
-        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+        driver.navigate().to(HOME_PAGE);
+        wait.until(pageLoad);
+        
+        for(int i = 0; i < CATEGORIES.length; i++) {
+            category = CATEGORIES[i];
+            driver.navigate().to(CATEGORIES_URLS[i]);
+            wait.until(pageLoad);
+        }
 
-        categoria = "Computers";
+        WebElement imageLink = driver.findElement(By.className("header-logo"));
+        imageLink.click();
         
-        driver.navigate().to("http://demo.nopcommerce.com/computers");
-        
-        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-        
-        categoria = "Electronics";
-        
-        driver.navigate().to("http://demo.nopcommerce.com/electronics");
-        
-        driver.manage().timeouts().pageLoadTimeout(1, TimeUnit.SECONDS);
-        
+        System.out.println("Caso T2. Ejecutado correctamente");
 
-        
-        
             
         } catch (org.junit.ComparisonFailure e) {
-            System.out.println("Error abriendo categoria: " + categoria);
+            System.out.println("Error abriendo categoria: " + category);
         }
-                
-        
-
-        
+         
         driver.close();
         driver.quit();
 
